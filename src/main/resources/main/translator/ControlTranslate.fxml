@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<AnchorPane prefHeight="459.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.translator.ControlTranslate">
+   <children>
+      <HBox layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="513.0" spacing="10.0">
+         <children>
+            <TextField fx:id="input" onKeyTyped="#search" prefHeight="35.0" prefWidth="156.0" promptText="English">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#speakEnglish" prefHeight="35.0" prefWidth="90.0" text="Speak" wrapText="true">
+               <font>
+                  <Font name="Comic Sans MS Bold" size="13.0" />
+               </font>
+            </Button>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openEditAddPane" prefHeight="35.0" prefWidth="90.0" text="Edit" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Comic Sans MS Bold" size="13.0" />
+               </font>
+            </Button>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#delete" prefHeight="35.0" prefWidth="90.0" text="Delete" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="Comic Sans MS Bold" size="13.0" />
+               </font>
+            </Button>
+            <TextField fx:id="inputVN" onKeyPressed="#searchMeaning" prefHeight="35.0" prefWidth="156.0" promptText="Tiếng Việt">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="50.0" prefHeight="395.0" prefWidth="502.0">
+         <children>
+            <VBox prefHeight="395.0" prefWidth="132.0">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="10.0">
+                     <children>
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#savingAdd" prefHeight="27.0" prefWidth="45.0" text="Add" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Comic Sans MS Bold" size="13.0" />
+                           </font>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#savingDelete" prefHeight="27.0" prefWidth="60.0" text="Delete" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Comic Sans MS Bold" size="13.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <ListView fx:id="savingList" blendMode="MULTIPLY" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#showSave" prefHeight="368.0" prefWidth="271.0" style="-fx-font-size: 14;" />
+               </children>
+            </VBox>
+            <VBox prefHeight="395.0" prefWidth="371.0">
+               <children>
+                  <TextArea fx:id="meaning" prefHeight="98.0" prefWidth="365.0">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </TextArea>
+                  <WebView fx:id="output" fontScale="0.8" minHeight="-1.0" minWidth="-1.0" prefHeight="395.0" prefWidth="373.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <ListView fx:id="listEnglish" disable="true" layoutX="10.0" layoutY="39.0" onMouseClicked="#showEnglish" prefHeight="368.0" prefWidth="134.0" visible="false" />
+      <VBox fx:id="searchVNBox" alignment="TOP_RIGHT" disable="true" layoutX="389.0" layoutY="40.0" visible="false">
+         <children>
+            <Button mnemonicParsing="false" onMouseClicked="#closeListVN" text="x" />
+            <ListView fx:id="listVN" onMouseClicked="#showVN" prefHeight="368.0" prefWidth="134.0" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

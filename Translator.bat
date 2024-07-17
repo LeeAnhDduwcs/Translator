@@ -1,0 +1,1 @@
+java -jar "D:\Program Files\Intellij\My Program\Translator\target\Translator-1.0-SNAPSHOT-shaded.jar"
