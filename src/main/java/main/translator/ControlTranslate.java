@@ -1,14 +1,11 @@
 package main.translator;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -18,21 +15,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ControlTranslate implements Initializable {
+//    public static Set<String> wordSet = new HashSet<>();
     public static String[] searchWord = new String[3];
+    @FXML
+    private ListView<String> filesList;
     @FXML
     private TextField input;
 
@@ -56,6 +54,7 @@ public class ControlTranslate implements Initializable {
                 listVN.getItems().clear();
                 listVN.getItems().addAll(Database.searchVN(inputVN.getText()));
                 if (!listVN.getItems().isEmpty()) {
+                    listVN.getSelectionModel().select(0);
                     searchWord = Database.html(listVN.getItems().get(0), false);
                     if (searchWord != null) {
                         input.setText(searchWord[0]);
@@ -69,10 +68,22 @@ public class ControlTranslate implements Initializable {
 
     @FXML
     void savingAdd(Event event) {
-        if (searchWord != null && !HelloApplication.wordSet.contains(searchWord[0])) {
+        if (searchWord != null) {
             savingList.getItems().add(searchWord[0]);
             Collections.sort(savingList.getItems());
-            HelloApplication.wordSet.add(searchWord[0]);
+            String currentFile = filesList.getSelectionModel().getSelectedItem();
+            if (currentFile != null) {
+                currentFile = HelloApplication.DICTIONARY_PATH+"\\"+currentFile;
+                try {
+                    FileWriter fileWriter = new FileWriter(currentFile);
+                    for (String s : savingList.getItems()) {
+                        fileWriter.write(s + ' ');
+                    }
+                    fileWriter.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -82,6 +93,7 @@ public class ControlTranslate implements Initializable {
             listEnglish.getItems().clear();
             listEnglish.getItems().addAll(Database.searchEnglish(input.getText()));
             if (!listEnglish.getItems().isEmpty()) {
+                listEnglish.getSelectionModel().select(0);
                 searchWord = Database.html(listEnglish.getItems().get(0), true);
                 if (searchWord != null) {
                     output.getEngine().loadContent(searchWord[1]);
@@ -96,7 +108,7 @@ public class ControlTranslate implements Initializable {
         Thread speak = new Thread(new Runnable() {
             @Override
             public void run() {
-                TextToSpeech.speak(input.getText(), "en");
+                TextToSpeech.speak(searchWord[0], "en");
             }
         });
         speak.start();
@@ -144,10 +156,21 @@ public class ControlTranslate implements Initializable {
 
     @FXML
     void savingDelete(Event event) {
-        savingList.getItems().remove(savingList.getSelectionModel().getSelectedItem());
-        HelloApplication.wordSet.remove(savingList.getSelectionModel().getSelectedItem());
+        savingList.getItems().remove(savingList.getSelectionModel().getSelectedIndex());
+        String currentFile = filesList.getSelectionModel().getSelectedItem();
+        if (currentFile != null) {
+            currentFile = HelloApplication.DICTIONARY_PATH+"\\"+currentFile;
+            try {
+                FileWriter fileWriter = new FileWriter(currentFile);
+                for (String s : savingList.getItems()) {
+                    fileWriter.write(s + ' ');
+                }
+                fileWriter.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
-    @FXML private VBox searchVNBox;
     @FXML private ListView<String> listEnglish;
     @FXML private ListView<String> listVN;
 
@@ -176,29 +199,44 @@ public class ControlTranslate implements Initializable {
         }
     }
 
-    @FXML
-    void closeListVN() {
-        searchVNBox.setDisable(true);
-        searchVNBox.setVisible(false);
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        savingList.getItems().addAll(HelloApplication.wordSet);
+        filesList.getItems().addAll(new File(HelloApplication.DICTIONARY_PATH).list());
         input.focusedProperty().addListener((observableValue, aBoolean, t1) -> {
             if (input.isFocused()) {
                 listEnglish.setDisable(false);
                 listEnglish.setVisible(true);
-            } else {
-                listEnglish.setDisable(true);
-                listEnglish.setVisible(false);
             }
+        });
+        output.setOnMouseClicked(event -> {
+            listEnglish.setDisable(true);
+            listEnglish.setVisible(false);
+            listVN.setDisable(true);
+            listVN.setVisible(false);
         });
         inputVN.focusedProperty().addListener((observableValue, aBoolean, t1) -> {
             if (inputVN.isFocused()) {
-                searchVNBox.setDisable(false);
-                searchVNBox.setVisible(true);
+                listVN.setDisable(false);
+                listVN.setVisible(true);
             }
         });
+    }
+
+    public void chooseFile(MouseEvent mouseEvent) {
+        String currentFile = filesList.getSelectionModel().getSelectedItem();
+        if (currentFile != null) {
+            currentFile = HelloApplication.DICTIONARY_PATH+"\\"+currentFile;
+            savingList.getItems().clear();
+            try {
+                Scanner scanner = new Scanner(new File(currentFile));
+                while (scanner.hasNext()) {
+                    savingList.getItems().add(scanner.next());
+                }
+                scanner.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

@@ -18,8 +18,7 @@ import java.util.Set;
 
 public class HelloApplication extends Application {
     public static Connection connection;
-    public static Set<String> wordSet = new HashSet<>();
-    public static final String SAVEPATH = "D:\\Program Files\\Intellij\\My Program\\Translator\\src\\main\\java\\main\\translator\\WordSavingList";
+    public static final String DICTIONARY_PATH = "C:\\Users\\DELL\\IdeaProjects\\Translator\\Dictionary File";
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -33,17 +32,17 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/dictionarydatabase", "root", "0ysq3_-asw6rd");
-        setup();
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/dictionarydatabase", "root", "cud.3.LQSyM");
+//        setup();
         launch();
-        save();
+//        save();
     }
 
     private static void setup() {
         try {
-            Scanner scanner = new Scanner(new File(SAVEPATH));
+            Scanner scanner = new Scanner(new File(DICTIONARY_PATH));
             while (scanner.hasNext()) {
-                wordSet.add(scanner.nextLine());
+
             }
             scanner.close();
         } catch (FileNotFoundException e) {
@@ -53,10 +52,10 @@ public class HelloApplication extends Application {
 
     private static void save() {
         try {
-            FileWriter fileWriter = new FileWriter(new File(SAVEPATH));
-            for (String s : wordSet) {
-                fileWriter.write(s + "\n");
-            }
+            FileWriter fileWriter = new FileWriter(new File(DICTIONARY_PATH));
+//            for (String s : wordSet) {
+//                fileWriter.write(s + "\n");
+//            }
             fileWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
